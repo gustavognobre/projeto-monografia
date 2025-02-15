@@ -1,5 +1,6 @@
+import RegisterTemplate from "@/templates/RegisterPage.template";
 import React from "react";
 
 export default function Register() {
-    return <h1>teste</h1>;
+    return <RegisterTemplate />;
 }

@@ -1,10 +1,10 @@
 "use server";
 
 import * as z from "zod";
-import { LoginSchema } from "@/schemas";
+import { RegisterSchema } from "@/schemas";
 
-export const login = async (values: z.infer<typeof LoginSchema>) => {
-    const validatedFilds = LoginSchema.safeParse(values);
+export const register = async (values: z.infer<typeof RegisterSchema>) => {
+    const validatedFilds = RegisterSchema.safeParse(values);
 
     if (!validatedFilds.success) {
         return { error: "Algum Problema com e-mail ou senha!" };

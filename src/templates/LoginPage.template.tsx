@@ -1,6 +1,6 @@
 import { LoginForm } from "@/components/auth/LoginForm.component";
 import React from "react";
 
-export default function LoginPage() {
+export default function LoginTemplate() {
     return <LoginForm />;
 }
