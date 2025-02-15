@@ -35,7 +35,7 @@ export const RegisterForm = () => {
             confirmPassword: "",
             name: "",
             dateBirth: "",
-            gender: "",
+            gender: undefined,
             photo: "",
         },
     });
