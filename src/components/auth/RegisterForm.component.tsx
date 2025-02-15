@@ -35,7 +35,8 @@ export const RegisterForm = () => {
             confirmPassword: "",
             name: "",
             dateBirth: "",
-            gender: undefined,
+            gender: "",
+            photo: "",
         },
     });
     const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
@@ -196,7 +197,25 @@ export const RegisterForm = () => {
                             </FormItem>
                         )}
                     />
-
+                    <FormField
+                        control={form.control}
+                        name="photo"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Perfil</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        className="h-12"
+                                        {...field}
+                                        disabled={isPending}
+                                        aria-label="Sua foto de Perfil"
+                                        placeholder="url da sua foto de perfil"
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <FormError message={error} />
                     <FormSuccess message={success} />
                     <Button
