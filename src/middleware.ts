@@ -11,17 +11,15 @@ export default auth((req) => {
     const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
     const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
     const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-    const isAtLogin = nextUrl.pathname === "/auth/login";
     const isAtRegister = nextUrl.pathname === "/auth/register"; // Permite acesso ao registro
-    const isAtDefaultRedirect = nextUrl.pathname === DEFAULT_LOGIN_REDIRECT;
 
     // Permite acesso às rotas de autenticação da API sem redirecionamento
     if (isApiAuthRoute) {
         return null;
     }
 
-    // Se estiver logado e tentar acessar login/register, redireciona para DEFAULT_LOGIN_REDIRECT
-    if (isLoggedIn && isAuthRoute && !isAtDefaultRedirect) {
+    // Se estiver logado e tentar acessar uma página de autenticação, redireciona para o destino padrão
+    if (isLoggedIn && isAuthRoute) {
         return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.url));
     }
 
