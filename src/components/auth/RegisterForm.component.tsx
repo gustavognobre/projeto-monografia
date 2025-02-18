@@ -36,7 +36,7 @@ export const RegisterForm = () => {
             name: "",
             dateBirth: "",
             gender: undefined,
-            photo: "",
+            image: "",
         },
     });
     const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
@@ -199,7 +199,7 @@ export const RegisterForm = () => {
                     />
                     <FormField
                         control={form.control}
-                        name="photo"
+                        name="image"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Perfil</FormLabel>

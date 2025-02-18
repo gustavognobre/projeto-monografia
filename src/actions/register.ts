@@ -15,7 +15,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
         return { error: "Algum Problema com e-mail ou senha!" };
     }
 
-    const { email, password, name, dateBirth, gender, photo } = validatedFilds.data;
+    const { email, password, name, dateBirth, gender, image } = validatedFilds.data;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const existingUser = await getUserByEmail(email);
@@ -26,7 +26,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 
     await db.user.create({
         data: {
-            photo,
+            image,
             name,
             email,
             dateBirth,

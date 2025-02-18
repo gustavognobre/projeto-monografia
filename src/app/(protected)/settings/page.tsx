@@ -14,6 +14,11 @@ export default async function SettingsPage() {
                         <p className="text-lg font-medium">{user.name}</p>
                         <p className="text-gray-600">{user.email}</p>
 
+                        {/* Exibe todos os dados do usuário */}
+                        <pre className="bg-gray-200 p-4 rounded text-sm text-left overflow-auto">
+                            {JSON.stringify(user, null, 2)}
+                        </pre>
+
                         <form
                             action={async () => {
                                 "use server";

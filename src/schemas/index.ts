@@ -21,7 +21,7 @@ export const RegisterSchema = z
         gender: z.enum(["Masculino", "Feminino", "Outros"], {
             required_error: "Por favor, selecione seu gênero.",
         }),
-        photo: z
+        image: z
             .string()
             .optional() // Foto é opcional
             .refine((value) => value !== undefined, { message: "Adicione uma URL." }),
