@@ -15,12 +15,19 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
 import { FormError } from "@/components/popup/FormError.component";
 import { FormSuccess } from "@/components/popup/FormSuccess.component";
 import { login } from "@/actions/login";
 
 export const LoginForm = () => {
+    const searchParams = useSearchParams();
+    const urlError =
+        searchParams.get("error") === "OAuthAccountNotLinked"
+            ? "E-mail sendo usado por outro método de login!"
+            : "";
+
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
@@ -37,8 +44,8 @@ export const LoginForm = () => {
         setSuccess("");
         startTransition(() => {
             login(values).then((data) => {
-                setError(data.error);
-                setSuccess(data.success);
+                setError(data?.error);
+                setSuccess(data?.success);
             });
         });
     };
@@ -91,7 +98,7 @@ export const LoginForm = () => {
                             </FormItem>
                         )}
                     />
-                    <FormError message={error} />
+                    <FormError message={error || urlError} />
                     <FormSuccess message={success} />
                     <Button
                         disabled={isPending}
