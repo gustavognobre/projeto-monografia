@@ -26,6 +26,7 @@ export const {
     },
     callbacks: {
         async signIn({ user, account }) {
+            console.log(user, account);
             if (account?.provider !== "credentials") return true;
 
             const existingUser = await getUserById(user.id);
@@ -37,9 +38,9 @@ export const {
             return true;
         },
         async session({ token, session }) {
-            console.log({
-                sessionToken: token,
-            });
+            // console.log({
+            //     sessionToken: token,
+            // });
             if (token.sub && session.user) {
                 session.user.id = token.sub;
             }

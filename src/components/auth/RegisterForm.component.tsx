@@ -123,7 +123,7 @@ export const RegisterForm = () => {
                         name="name"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Senha</FormLabel>
+                                <FormLabel>Nome</FormLabel>
                                 <FormControl>
                                     <Input
                                         className="h-12"

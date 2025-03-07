@@ -1,5 +1,4 @@
 import { auth, signOut } from "@/auth";
-import { Header } from "@/components/layout/Header";
 
 export default async function SettingsPage() {
     const session = await auth();

@@ -6,7 +6,7 @@ import { Social } from "@/components/auth/SocialLogin.components";
 import { BackButton } from "../auth/BackButton.component";
 
 interface ICardWrapperProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     headerLabel: string;
     headerText: string;
     backButtonLabel: string;
