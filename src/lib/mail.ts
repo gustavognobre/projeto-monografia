@@ -2,6 +2,45 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+export const sendPasswordResetEmail = async (email: string, token: string) => {
+    const resetLink = `http://localhost:3000/auth/new-password?token=${encodeURIComponent(token)}`;
+
+    const buttonStyle = `
+        background: #4CAF50; 
+        color: #fff; 
+        padding: 14px 28px; 
+        text-decoration: none; 
+        font-size: 18px; 
+        font-weight: bold; 
+        border-radius: 8px; 
+        display: inline-block; 
+        transition: transform 0.2s, background 0.3s ease-in-out;
+    `;
+
+    const htmlContent = `
+    <div style="background-color: #f4f4f4; padding: 40px; text-align: center;">
+        <p style="font-size: 18px; color: #333; margin-bottom: 20px;">
+            Clique no botão abaixo para redefinir sua senha:
+        </p>
+        <a href="${resetLink}" style="${buttonStyle}" 
+            onmouseover="this.style.background='#45a049'; this.style.transform='translateY(-2px)';"
+            onmouseout="this.style.background='#4CAF50'; this.style.transform='translateY(0)';">
+            ✅ Redefinir Senha
+        </a>
+        <p style="font-size: 14px; color: #666; margin-top: 20px;">
+            Se você não solicitou essa alteração, ignore este e-mail.
+        </p>
+    </div>
+    `;
+
+    await resend.emails.send({
+        from: "onboarding@resend.dev",
+        to: email,
+        subject: "Redefinição de Senha",
+        html: htmlContent,
+    });
+};
+
 export const sendVerificationEmail = async (email: string, token: string) => {
     const confirmLink = `http://localhost:3000/auth/new-verification?token=${token}`;
 
