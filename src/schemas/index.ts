@@ -14,6 +14,7 @@ export const LoginSchema = z.object({
         message: "E-mail inválido!",
     }),
     password: z.string().min(8, { message: "Senha inválida!" }),
+    code: z.optional(z.string()),
 });
 
 export const RegisterSchema = z
