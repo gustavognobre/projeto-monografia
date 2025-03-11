@@ -1,3 +1,4 @@
+"use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     DropdownMenuTrigger,
@@ -7,42 +8,44 @@ import {
     DropdownMenuItem,
     DropdownMenuContent,
     DropdownMenuShortcut,
-} from "../ui/dropdown-menu";
-import { signOut } from "next-auth/react";
+} from "@/components/ui/dropdown-menu";
 import { LogOut } from "lucide-react";
+import { logout } from "@/actions/logout";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
-interface IHeader {
-    user: any;
-    session: any;
-}
-
-export function Header({ user, session }: IHeader) {
-    console.log(session.user);
+export function Header() {
+    const user = useCurrentUser();
 
     const handleSignOut = async () => {
-        await signOut({ callbackUrl: "/" });
+        await logout();
     };
 
     return (
-        <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b bg-background px-6">
-            <div className="flex items-center space-x-4 ml-auto">
+        <header className="sticky top-0 z-50 flex h-16 w-full items-center border-b bg-white px-6">
+            {/* Área esquerda do header - adicione seu logo ou título aqui */}
+
+            {/* Área central - pode adicionar navegação ou outro conteúdo aqui */}
+            <div className="flex-grow mx-4">{/* Conteúdo central opcional */}</div>
+
+            {/* Área direita com perfil do usuário */}
+            <div className="flex items-center space-x-4 flex-shrink-0">
                 <span className="text-sm font-medium">{user?.name ?? "Usuário"}</span>
                 <DropdownMenu>
-                    <DropdownMenuTrigger>
-                        <Avatar>
+                    <DropdownMenuTrigger asChild>
+                        <Avatar className="cursor-pointer">
                             <AvatarImage
-                                src={user?.image ?? "/path/to/default/avatar.jpg"}
+                                src={user?.image ?? "/placeholder.svg?height=40&width=40"}
                                 alt="User Avatar"
                             />
                             <AvatarFallback>{user?.name?.charAt(0) ?? "?"}</AvatarFallback>
                         </Avatar>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    <DropdownMenuContent align="end">
                         <DropdownMenuLabel>{user?.name ?? "Usuário"}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                             onClick={handleSignOut}
-                            className="flex items-center text-red-700"
+                            className="flex items-center text-red-700 cursor-pointer"
                         >
                             Sair
                             <DropdownMenuShortcut>
