@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, LayoutDashboard, Settings, UserCog, Users } from "lucide-react";
+import { Home, LayoutDashboard, Server, Settings, UserCog, Users } from "lucide-react";
 import {
     Sidebar,
     SidebarContent,
@@ -20,11 +20,12 @@ export function SideBar() {
     const pathname = usePathname(); // Hook para pegar o pathname da URL atual
 
     const menuItems = [
-        { icon: Home, label: "Home", link: "/" },
+        { icon: Home, label: "Home", link: "/main" },
         { icon: LayoutDashboard, label: "Painel", link: "/dashboard" },
-        { icon: Users, label: "Usuário", link: "/main" },
+        { icon: Users, label: "Usuário", link: "/client" },
         { icon: Settings, label: "Configurações", link: "/settings" },
         { icon: UserCog, label: "Administrador", link: "/admin" },
+        { icon: Server, label: "Servidor", link: "/server" },
     ];
 
     return (

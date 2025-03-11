@@ -1,5 +1,5 @@
-import { SidebarProvider } from "@/components/ui/sidebar"; // Certifique-se de importar o SidebarProvider correto
-import { SideBar } from "../_components/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { SideBar } from "./_components/sidebar";
 import { Header } from "@/components/layout/Header";
 
 interface ProtectedLayoutProps {
