@@ -1,6 +1,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SideBar } from "./_components/sidebar";
 import { Header } from "@/components/layout/Header";
+import { Toaster } from "sonner";
 
 interface ProtectedLayoutProps {
     children: React.ReactNode;
@@ -15,7 +16,11 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
                 <SideBar />
                 <div className="w-full ">
                     <Header />
-                    <div className="flex-grow">{children}</div>
+                    <div className="flex-grow">
+                        {" "}
+                        <Toaster />
+                        {children}
+                    </div>
                 </div>
             </div>
         </SidebarProvider>
