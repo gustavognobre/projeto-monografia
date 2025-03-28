@@ -1,7 +1,12 @@
-import { UserInfo } from "@/components/UserInfo.component";
-import { currentUser } from "@/lib/auth";
+import { UserInfo } from "@/components/main/UserInfo.component";
+import { getUser } from "@/lib/get-user";
 
 export default async function ServerPage() {
-    const user = await currentUser();
+    const user = await getUser(); // Obtém todas as informações do usuário
+
+    if (!user) {
+        return <h1>Usuário não autenticado ou não encontrado</h1>;
+    }
+
     return <UserInfo label="Componente de Servidor" user={user} />;
 }

@@ -9,9 +9,10 @@ import {
     DropdownMenuContent,
     DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
-import { LogOut } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { logout } from "@/actions/logout";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import Link from "next/link";
 
 export function Header() {
     const user = useCurrentUser();
@@ -52,6 +53,14 @@ export function Header() {
                                 <LogOut className="ml-2 w-4 h-4 text-red-700" />
                             </DropdownMenuShortcut>
                         </DropdownMenuItem>
+                        <Link href="/settings">
+                            <DropdownMenuItem className="flex items-center  cursor-pointer">
+                                Configurações
+                                <DropdownMenuShortcut>
+                                    <Settings className="ml-2 w-4 h-4 " />
+                                </DropdownMenuShortcut>
+                            </DropdownMenuItem>{" "}
+                        </Link>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>

@@ -50,7 +50,7 @@ export function SideBar() {
         { icon: Users, label: "Usuário", link: "/client" },
         { icon: Settings, label: "Configurações", link: "/settings" },
         { icon: UserCog, label: "Administrador", link: "/admin", role: UserRole.ADMIN },
-        { icon: Server, label: "Servidor", link: "/server", role: UserRole.ADMIN },
+        // { icon: Server, label: "Servidor", link: "/server", role: UserRole.ADMIN },
         { icon: TableCellsSplit, label: "Parametros", link: "/parameter", role: UserRole.ADMIN },
     ];
 

@@ -1,8 +1,12 @@
-"use client";
-import { UserInfo } from "@/components/UserInfo.component";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { UserInfo } from "@/components/main/UserInfo.component";
+import { getUser } from "@/lib/get-user";
 
-export default function ClientPage() {
-    const user = useCurrentUser();
-    return <UserInfo label="Dados do usuário" user={user} />;
+export default async function ServerPage() {
+    const user = await getUser();
+
+    if (!user) {
+        return <h1>Usuário não autenticado ou não encontrado</h1>;
+    }
+
+    return <UserInfo label="Componente de Servidor" user={user} />;
 }
