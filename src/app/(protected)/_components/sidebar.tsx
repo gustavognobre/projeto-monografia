@@ -2,7 +2,15 @@
 
 import { useCurrentRole } from "@/hooks/use-current-role"; // Hook para pegar a role do usuário
 import { UserRole } from "@prisma/client";
-import { Home, LayoutDashboard, Server, Settings, UserCog, Users } from "lucide-react";
+import {
+    Home,
+    LayoutDashboard,
+    Server,
+    Settings,
+    TableCellsSplit,
+    UserCog,
+    Users,
+} from "lucide-react";
 import {
     Sidebar,
     SidebarContent,
@@ -43,6 +51,7 @@ export function SideBar() {
         { icon: Settings, label: "Configurações", link: "/settings" },
         { icon: UserCog, label: "Administrador", link: "/admin", role: UserRole.ADMIN },
         { icon: Server, label: "Servidor", link: "/server", role: UserRole.ADMIN },
+        { icon: TableCellsSplit, label: "Parametros", link: "/parameter", role: UserRole.ADMIN },
     ];
 
     return (

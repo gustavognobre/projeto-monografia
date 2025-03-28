@@ -85,3 +85,28 @@ model TwoFactorConfirmation {
   
   @@unique([userId])
 }
+
+model ExamParameter {
+  id          Int      @id @default(autoincrement())
+  name        String   
+  description String?  
+  sampleType  SampleType
+  patientGroup PatientGroup
+  minValue    Float    
+  maxValue    Float    
+  unit        String   
+}
+
+enum SampleType {
+  SANGUE
+  FEZES
+  URINA
+  OUTROS
+}
+
+enum PatientGroup {
+  HOMEM
+  MULHER
+  CRIANCA
+  IDOSO
+}
