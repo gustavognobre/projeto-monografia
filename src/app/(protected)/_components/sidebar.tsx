@@ -46,7 +46,7 @@ export function SideBar() {
 
     const menuItems = [
         { icon: Home, label: "Home", link: "/main" },
-        { icon: LayoutDashboard, label: "Painel", link: "/dashboard" },
+        // { icon: LayoutDashboard, label: "Painel", link: "/dashboard" },
         { icon: Users, label: "Usuário", link: "/client" },
         { icon: Settings, label: "Configurações", link: "/settings" },
         { icon: UserCog, label: "Administrador", link: "/admin", role: UserRole.ADMIN },

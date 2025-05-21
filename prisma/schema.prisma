@@ -86,27 +86,17 @@ model TwoFactorConfirmation {
   @@unique([userId])
 }
 
-model ExamParameter {
-  id          Int      @id @default(autoincrement())
-  name        String   
-  description String?  
-  sampleType  SampleType
-  patientGroup PatientGroup
-  minValue    Float    
-  maxValue    Float    
-  unit        String   
-}
+model Exam {
+  id  String @id @default(cuid())
+  name  String
+  group String
+  normal_min Float?
+  normal_max Float?
+  intermediary_min Float?
+  intermediary_max Float?
+  hard_value Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 
-enum SampleType {
-  SANGUE
-  FEZES
-  URINA
-  OUTROS
-}
-
-enum PatientGroup {
-  HOMEM
-  MULHER
-  CRIANCA
-  IDOSO
+  @@index([id])
 }

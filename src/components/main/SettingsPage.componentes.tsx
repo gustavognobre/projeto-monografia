@@ -1,193 +1,173 @@
-"use client";
+import { db } from "@/lib/db";
+import { getUser } from "@/lib/get-user";
+import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { UserCircle, Mail, Calendar, Shield, User } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import * as z from "zod";
-import { Settings } from "@/actions/settings";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { useSession } from "next-auth/react";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { SettingsSchema } from "@/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { FormError } from "@/components/popup/FormError.component";
-import { FormSuccess } from "@/components/popup/FormSuccess.component";
-import { Switch } from "@/components/ui/switch";
+const SettingsPage = async () => {
+    const sessionUser = await getUser();
 
-export default function SettingsPage() {
-    const user = useCurrentUser();
+    if (!sessionUser) {
+        return <div className="text-center pt-24">Usuário não autenticado</div>;
+    }
 
-    const [error, setError] = useState<string | undefined>();
-    const [success, setSuccess] = useState<string | undefined>();
-    const { update } = useSession();
-    const [isPending, startTransition] = useTransition();
-
-    const form = useForm<z.infer<typeof SettingsSchema>>({
-        resolver: zodResolver(SettingsSchema),
-        defaultValues: {
-            name: user?.name || "",
-            email: user?.email || "",
-            password: "",
-            newPassword: "",
-            isTwoFactorEnabled: user?.isTwoFactorEnabled ?? false,
-        },
+    const user = await db.user.findUnique({
+        where: { id: sessionUser.id },
     });
 
-    const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
-        // Verifica se as senhas foram preenchidas corretamente
-        if (values.password && !values.newPassword) {
-            setError("Necessário preencher uma nova senha!");
-            return;
-        }
-
-        if (values.newPassword && !values.password) {
-            setError("Necessário preencher a senha antiga!");
-            return;
-        }
-
-        startTransiction(() => {
-            Settings(values)
-                .then((data) => {
-                    if (data.error) {
-                        setError(data.error);
-                    }
-                    if (data.success) {
-                        setSuccess(data.success);
-                    }
-                })
-                .catch(() => setError("Alguma coisa não esta certa!"));
-        });
-    };
+    if (!user) {
+        return <div className="text-center pt-24">Usuário não encontrado</div>;
+    }
 
     return (
-        <Card className="w-[600px]">
-            <CardHeader>
-                <p>Configurações</p>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-                        <div>
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Nome</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                placeholder="Novo Nome"
-                                                disabled={isPending}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            {user?.isOAuth === false && (
-                                <>
-                                    <FormField
-                                        control={form.control}
-                                        name="email"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>E-mail</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder="Novo Email"
-                                                        type="email"
-                                                        disabled={isPending}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="password"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Senha</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder="********"
-                                                        type="password"
-                                                        disabled={isPending}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="newPassword"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Nova Senha</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder="********"
-                                                        type="password"
-                                                        disabled={isPending}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="isTwoFactorEnabled"
-                                        render={({ field }) => (
-                                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                                                <div className="space-y-0.5">
-                                                    <FormLabel>
-                                                        Autenticação de dois fatores
-                                                    </FormLabel>
-                                                    <FormDescription>
-                                                        Por segurança, recomendamos ativá-la para
-                                                        sua conta!
-                                                    </FormDescription>
-                                                </div>
-                                                <FormControl>
-                                                    <Switch
-                                                        disabled={isPending}
-                                                        checked={field.value ?? false} // Garante que nunca será undefined
-                                                        onCheckedChange={(checked) => {
-                                                            field.onChange(checked); // Atualiza corretamente o valor
-                                                        }}
-                                                    />
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </>
-                            )}
+        <main className="flex flex-col items-center pt-24 px-4">
+            <h1 className="text-3xl font-semibold mb-6">Configurações da Conta</h1>
+            <Card className="w-full max-w-7xl mx-auto border-0 bg-transparent shadow-none">
+                <CardHeader className="pb-4">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div className="flex items-center gap-6">
+                            <Avatar className="h-20 w-20 border-2 border-primary/20">
+                                <AvatarImage src={user.image || "/default-avatar.png"} alt={user.name || "Usuário"} />
+                                <AvatarFallback>
+                                    {user.name?.substring(0, 2).toUpperCase() || "UN"}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <CardTitle className="text-2xl font-bold">{user.name || "Usuário"}</CardTitle>
+                                <CardDescription>Informações da conta</CardDescription>
+                            </div>
                         </div>
-                        <FormError message={error} />
-                        <FormSuccess message={success} />
-                        <Button disabled={isPending} type="submit">
-                            Salvar
-                        </Button>
+                        <Badge variant={user.isTwoFactorEnabled ? "default" : "outline"}>
+                            {user.isTwoFactorEnabled ? "2FA Ativado" : "2FA Desativado"}
+                        </Badge>
+                    </div>
+                </CardHeader>
+                <Separator />
+                <CardContent className="pt-6">
+                    <form className="space-y-4">
+                        {/* Nome */}
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 shrink-0">
+                                <User className="h-6 w-6 text-primary" />
+                            </div>
+                            <div className="w-full">
+                                <label className="text-sm font-medium text-gray-700">Nome</label>
+                                <input
+                                    name="name"
+                                    type="text"
+                                    defaultValue={user.name || ""}
+                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                                />
+                            </div>
+                        </div>
+
+                        {/* E-mail */}
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 shrink-0">
+                                <Mail className="h-6 w-6 text-primary" />
+                            </div>
+                            <div className="w-full">
+                                <label className="text-sm font-medium text-gray-700">E-mail</label>
+                                <input
+                                    name="email"
+                                    type="email"
+                                    defaultValue={user.email || ""}
+                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                                    disabled
+                                />
+                            </div>
+                        </div>
+
+                        {/* Gênero */}
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 shrink-0">
+                                <UserCircle className="h-6 w-6 text-primary" />
+                            </div>
+                            <div className="w-full">
+                                <label className="text-sm font-medium text-gray-700">Gênero</label>
+                                <select
+                                    name="gender"
+                                    defaultValue={user.gender || ""}
+                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                                >
+                                    <option value="">Selecione</option>
+                                    <option value="male">Masculino</option>
+                                    <option value="female">Feminino</option>
+                                    <option value="other">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Data de Nascimento */}
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 shrink-0">
+                                <Calendar className="h-6 w-6 text-primary" />
+                            </div>
+                            <div className="w-full">
+                                <label className="text-sm font-medium text-gray-700">Data de Nascimento</label>
+                                <input
+                                    name="dateBirth"
+                                    type="date"
+                                    defaultValue={
+                                        user.dateBirth
+                                            ? new Date(user.dateBirth).toISOString().split("T")[0]
+                                            : ""
+                                    }
+                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Imagem */}
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 shrink-0">
+                                <UserCircle className="h-6 w-6 text-primary" />
+                            </div>
+                            <div className="w-full">
+                                <label className="text-sm font-medium text-gray-700">Imagem (URL)</label>
+                                <input
+                                    name="image"
+                                    type="url"
+                                    defaultValue={user.image || ""}
+                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Autenticação de 2 Fatores */}
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 shrink-0">
+                                <Shield className="h-6 w-6 text-primary" />
+                            </div>
+                            <div className="w-full flex items-center space-x-2">
+                                <input
+                                    name="isTwoFactorEnabled"
+                                    type="checkbox"
+                                    defaultChecked={user.isTwoFactorEnabled}
+                                    className="h-4 w-4 border-gray-300 rounded"
+                                />
+                                <label className="text-sm font-medium text-gray-700">
+                                    Autenticação de 2 Fatores ativada
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-center mt-4">
+                            <button
+                                type="submit"
+                                className="w-full max-w-xs bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                            >
+                                Salvar Alterações
+                            </button>
+                        </div>
                     </form>
-                </Form>
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+        </main>
     );
-}
+};
+
+export default SettingsPage;
