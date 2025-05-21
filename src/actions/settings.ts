@@ -11,7 +11,7 @@ export default async function Settings(formData : FormData, id:string){
             gender:formData.get("gender") as string,
             dateBirth: formData.get("dateBirth") as string,
             image:formData.get("image") as string,
-            isTwoFactorEnabled: formData.get("isTwoFactorEnabled") === "FALSE",
+            isTwoFactorEnabled: formData.get("isTwoFactorEnabled") === "on",
         }
     }))
 }

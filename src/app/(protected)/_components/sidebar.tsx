@@ -3,7 +3,9 @@
 import { useCurrentRole } from "@/hooks/use-current-role"; // Hook para pegar a role do usuário
 import { UserRole } from "@prisma/client";
 import {
+    FilePlus,
     Home,
+    icons,
     LayoutDashboard,
     Server,
     Settings,
@@ -49,9 +51,10 @@ export function SideBar() {
         // { icon: LayoutDashboard, label: "Painel", link: "/dashboard" },
         { icon: Users, label: "Usuário", link: "/client" },
         { icon: Settings, label: "Configurações", link: "/settings" },
-        { icon: UserCog, label: "Administrador", link: "/admin", role: UserRole.ADMIN },
+        // { icon: UserCog, label: "Administrador", link: "/admin", role: UserRole.ADMIN },
         // { icon: Server, label: "Servidor", link: "/server", role: UserRole.ADMIN },
         { icon: TableCellsSplit, label: "Parametros", link: "/parameter", role: UserRole.ADMIN },
+        {icon: FilePlus, label: "Adicionar Exame", link: "/new-exam"}
     ];
 
     return (
