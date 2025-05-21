@@ -50,6 +50,7 @@ export default function AddExamForm({ onSuccess }: { onSuccess?: () => void }) {
                     <SelectItem value="Idosos (≥ 60 anos)">Idosos (≥ 60 anos)</SelectItem>
                     <SelectItem value="Crianças (>10 anos)">Crianças (&gt;10 anos)</SelectItem>
                     <SelectItem value="Crianças (<10 anos)">Crianças (&lt;10 anos)</SelectItem>
+                    <SelectItem value="Todos">Todos</SelectItem>
                 </SelectContent>
             </Select>
 
