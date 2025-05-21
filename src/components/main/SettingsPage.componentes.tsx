@@ -23,8 +23,9 @@ const SettingsPage = async () => {
     }
 
     return (
+    <section className="max-w-xl mx-auto p-8 bg-white rounded-2xl shadow-md space-y-6">
+      <h2 className="text-3xl font-semibold tracking-tight">Configurações da Conta</h2>
         <main className="flex flex-col items-center pt-24 px-4">
-            <h1 className="text-3xl font-semibold mb-6">Configurações da Conta</h1>
             <Card className="w-full max-w-7xl mx-auto border-0 bg-transparent shadow-none">
                 <CardHeader className="pb-4">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -167,6 +168,7 @@ const SettingsPage = async () => {
                 </CardContent>
             </Card>
         </main>
+        </section>
     );
 };
 
