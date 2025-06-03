@@ -12,7 +12,15 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"; // certifique-se de ter um input customizado
+import { Input } from "@/components/ui/input";
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from "@/components/ui/select";
+
 import AddExamForm from "../../modal/AddExam.component";
 import ExamDetailsModal from "@/modal/ViewExam.modal";
 
@@ -28,6 +36,15 @@ interface Props {
     exams: Exam[];
 }
 
+const GROUPS = [
+  "Todos",
+  "Homens adultos (18–59)",
+  "Mulheres adultas (18–59)",
+  "Idosos (≥ 60 anos)",
+  "Crianças (>10 anos)",
+  "Crianças (<10 anos)",
+];
+
 export default function ExamList({ exams }: Props) {
     const router = useRouter();
 
@@ -36,7 +53,7 @@ export default function ExamList({ exams }: Props) {
     const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
 
     const [filterName, setFilterName] = useState("");
-    const [filterGroup, setFilterGroup] = useState("");
+    const [filterGroup, setFilterGroup] = useState("Todos");
 
     async function handleDelete(id: string) {
         try {
@@ -47,10 +64,15 @@ export default function ExamList({ exams }: Props) {
         }
     }
 
+    const uniqueNames = useMemo(() => {
+        const namesSet = new Set(exams.map((e) => e.name));
+        return Array.from(namesSet);
+    }, [exams]);
+
     const filteredExams = useMemo(() => {
         return exams.filter((exam) => {
-            const nameMatch = exam.name.toLowerCase().includes(filterName.toLowerCase());
-            const groupMatch = exam.group.toLowerCase().includes(filterGroup.toLowerCase());
+            const nameMatch = filterName ? exam.name === filterName : true;
+            const groupMatch = filterGroup === "Todos" ? true : exam.group === filterGroup;
             return nameMatch && groupMatch;
         });
     }, [exams, filterName, filterGroup]);
@@ -64,23 +86,45 @@ export default function ExamList({ exams }: Props) {
 
             {/* Filtros */}
             <section className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-                <Input
-                    placeholder="Filtrar por nome"
-                    value={filterName}
-                    onChange={(e) => setFilterName(e.target.value)}
-                    className="max-w-xs"
-                />
-                <Input
-                    placeholder="Filtrar por grupo"
+                {/* Filtro por nome */}
+                <Select
+                    value={filterName || "__all__"}
+                    onValueChange={(value) => setFilterName(value === "__all__" ? "" : value)}
+                >
+                    <SelectTrigger className="max-w-xs">
+                        <SelectValue placeholder="Filtrar por nome" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="__all__">Todos</SelectItem>
+                        {uniqueNames.map((name) => (
+                            <SelectItem key={name} value={name}>
+                                {name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+
+                {/* Filtro por grupo */}
+                <Select
                     value={filterGroup}
-                    onChange={(e) => setFilterGroup(e.target.value)}
-                    className="max-w-xs"
-                />
+                    onValueChange={(value) => setFilterGroup(value)}
+                >
+                    <SelectTrigger className="max-w-xs">
+                        <SelectValue placeholder="Filtrar por grupo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {GROUPS.map((group) => (
+                            <SelectItem key={group} value={group}>
+                                {group}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </section>
 
             <section className="w-full">
                 <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-                    {/* Card que abre modal */}
+                    {/* Card para novo exame */}
                     <li className="p-6 border-2 border-dashed rounded-xl flex items-center justify-center hover:bg-gray-50 transition">
                         <Dialog open={openAddModal} onOpenChange={setOpenAddModal}>
                             <DialogTrigger asChild>
@@ -117,6 +161,7 @@ export default function ExamList({ exams }: Props) {
                                 <h2 className="text-lg font-semibold text-blue-600">
                                     {exam.name}
                                 </h2>
+                                <span className="text-xs text-gray-300">{exam.id}</span>
                                 <p className="text-sm text-gray-600">Grupo: {exam.group}</p>
                                 <p className="text-sm text-gray-700">
                                     Valores normais: {exam.normal_min ?? "-"} -{" "}

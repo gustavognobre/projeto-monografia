@@ -83,31 +83,42 @@ export default function ExamDetailsModal({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm">
-        <DialogHeader>
-          <DialogTitle>Editar Exame</DialogTitle>
-          <DialogDescription>Altere os dados e clique em salvar</DialogDescription>
-        </DialogHeader>
+  <Dialog open={open} onOpenChange={onOpenChange}>
+    <DialogContent className="max-w-md p-6">
+      <DialogHeader>
+        <DialogTitle className="text-xl font-semibold">Editar Exame</DialogTitle>
+        <DialogDescription className="text-sm text-muted-foreground">
+          Altere os dados e clique em salvar.
+        </DialogDescription>
+      </DialogHeader>
 
-        <form action={handleUpdate} className="space-y-4 text-sm">
-          {/* Campo oculto para enviar o ID */}
-          <input type="hidden" name="id" value={formData.id} />
+      <form action={handleUpdate} className="space-y-6 text-sm">
+        <input type="hidden" name="id" value={formData.id} />
 
+        <div className="space-y-2">
+          <label htmlFor="name" className="block font-medium">
+            Nome do exame
+          </label>
           <Input
+            id="name"
             name="name"
             defaultValue={formData.name}
             onChange={(e) => handleChange("name", e.target.value)}
             placeholder="Nome do exame"
             required
           />
+        </div>
 
+        <div className="space-y-2">
+          <label htmlFor="group" className="block font-medium">
+            Grupo
+          </label>
           <Select
             name="group"
             defaultValue={formData.group}
             onValueChange={(value) => handleChange("group", value)}
           >
-            <SelectTrigger>
+            <SelectTrigger id="group">
               <SelectValue placeholder="Selecione o grupo" />
             </SelectTrigger>
             <SelectContent>
@@ -118,66 +129,104 @@ export default function ExamDetailsModal({
               ))}
             </SelectContent>
           </Select>
+        </div>
 
+        <fieldset className="space-y-4">
+          <legend className="text-sm font-semibold text-muted-foreground">
+            Valores Normais
+          </legend>
           <div className="grid grid-cols-2 gap-4">
-            <Input
-              type="number"
-              name="normal_min"
-              defaultValue={formData.normal_min ?? ""}
-              onChange={(e) => handleNumberChange("normal_min", e.target.value)}
-              placeholder="Mínimo Normal"
-              step="any"
-            />
-            <Input
-              type="number"
-              name="normal_max"
-              defaultValue={formData.normal_max ?? ""}
-              onChange={(e) => handleNumberChange("normal_max", e.target.value)}
-              placeholder="Máximo Normal"
-              step="any"
-            />
+            <div className="space-y-2">
+              <label htmlFor="normal_min" className="block font-medium">
+                Mínimo
+              </label>
+              <Input
+                id="normal_min"
+                type="number"
+                name="normal_min"
+                defaultValue={formData.normal_min ?? ""}
+                onChange={(e) => handleNumberChange("normal_min", e.target.value)}
+                placeholder="0.0"
+                step="any"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="normal_max" className="block font-medium">
+                Máximo
+              </label>
+              <Input
+                id="normal_max"
+                type="number"
+                name="normal_max"
+                defaultValue={formData.normal_max ?? ""}
+                onChange={(e) => handleNumberChange("normal_max", e.target.value)}
+                placeholder="0.0"
+                step="any"
+              />
+            </div>
           </div>
+        </fieldset>
 
+        <fieldset className="space-y-4">
+          <legend className="text-sm font-semibold text-muted-foreground">
+            Valores Intermediários
+          </legend>
           <div className="grid grid-cols-2 gap-4">
-            <Input
-              type="number"
-              name="intermediary_min"
-              defaultValue={formData.intermediary_min ?? ""}
-              onChange={(e) =>
-                handleNumberChange("intermediary_min", e.target.value)
-              }
-              placeholder="Mínimo Intermediário"
-              step="any"
-            />
-            <Input
-              type="number"
-              name="intermediary_max"
-              defaultValue={formData.intermediary_max ?? ""}
-              onChange={(e) =>
-                handleNumberChange("intermediary_max", e.target.value)
-              }
-              placeholder="Máximo Intermediário"
-              step="any"
-            />
+            <div className="space-y-2">
+              <label htmlFor="intermediary_min" className="block font-medium">
+                Mínimo
+              </label>
+              <Input
+                id="intermediary_min"
+                type="number"
+                name="intermediary_min"
+                defaultValue={formData.intermediary_min ?? ""}
+                onChange={(e) => handleNumberChange("intermediary_min", e.target.value)}
+                placeholder="0.0"
+                step="any"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="intermediary_max" className="block font-medium">
+                Máximo
+              </label>
+              <Input
+                id="intermediary_max"
+                type="number"
+                name="intermediary_max"
+                defaultValue={formData.intermediary_max ?? ""}
+                onChange={(e) => handleNumberChange("intermediary_max", e.target.value)}
+                placeholder="0.0"
+                step="any"
+              />
+            </div>
           </div>
+        </fieldset>
 
+        <div className="space-y-2">
+          <label htmlFor="hard_value" className="block font-medium">
+            Valor de Risco
+          </label>
           <Input
+            id="hard_value"
             type="number"
             name="hard_value"
             defaultValue={formData.hard_value ?? ""}
             onChange={(e) => handleNumberChange("hard_value", e.target.value)}
-            placeholder="Valor de Risco"
+            placeholder="Ex: 200.0"
             step="any"
           />
+        </div>
 
-          <DialogFooter className="flex justify-between gap-2">
-            <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
-              Cancelar
-            </Button>
-            <Button type="submit">Salvar</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
+        <DialogFooter className="flex justify-end gap-3 pt-4">
+          <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
+          <Button type="submit">Salvar</Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
+  </Dialog>
+);
+
 }

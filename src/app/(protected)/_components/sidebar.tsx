@@ -1,6 +1,4 @@
 "use client";
-
-import { useCurrentRole } from "@/hooks/use-current-role"; // Hook para pegar a role do usuário
 import { UserRole } from "@prisma/client";
 import {
     FilePlus,
@@ -26,7 +24,8 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // Hook para pegar o pathname da URL atual
+import { usePathname } from "next/navigation"; 
+import { useCurrentRole } from "@/hooks/useAppRequest";
 
 interface RoleGateProps {
     children: React.ReactNode;

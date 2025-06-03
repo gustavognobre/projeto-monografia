@@ -11,8 +11,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, Settings } from "lucide-react";
 import { logout } from "@/actions/logout";
-import { useCurrentUser } from "@/hooks/use-current-user";
+
 import Link from "next/link";
+import { useCurrentUser } from "@/hooks/useAppRequest";
 
 export function Header() {
     const user = useCurrentUser();
