@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PlusCircle } from "lucide-react";
 
 const GROUP_OPTIONS = [
   "Homens adultos (18–59)",
@@ -131,77 +132,80 @@ export default function ExamDetailsModal({
           </Select>
         </div>
 
-        <fieldset className="space-y-4">
-          <legend className="text-sm font-semibold text-muted-foreground">
-            Valores Normais
-          </legend>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="normal_min" className="block font-medium">
-                Mínimo
-              </label>
-              <Input
-                id="normal_min"
-                type="number"
-                name="normal_min"
-                defaultValue={formData.normal_min ?? ""}
-                onChange={(e) => handleNumberChange("normal_min", e.target.value)}
-                placeholder="0.0"
-                step="any"
-              />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="normal_max" className="block font-medium">
-                Máximo
-              </label>
-              <Input
-                id="normal_max"
-                type="number"
-                name="normal_max"
-                defaultValue={formData.normal_max ?? ""}
-                onChange={(e) => handleNumberChange("normal_max", e.target.value)}
-                placeholder="0.0"
-                step="any"
-              />
-            </div>
-          </div>
-        </fieldset>
+<fieldset className="space-y-4">
+  <legend className="text-sm font-semibold text-muted-foreground">
+    Valores Normais
+  </legend>
+  <div className="flex gap-6">
+    <div className="flex flex-col flex-1">
+      <label htmlFor="normal_min" className="font-medium mb-1">
+        Mínimo
+      </label>
+      <Input
+        id="normal_min"
+        type="number"
+        name="normal_min"
+        defaultValue={formData.normal_min ?? ""}
+        onChange={(e) => handleNumberChange("normal_min", e.target.value)}
+        placeholder="0.0"
+        step="any"
+      />
+    </div>
+    <div className="flex flex-col flex-1">
+      <label htmlFor="normal_max" className="font-medium mb-1">
+        Máximo
+      </label>
+      <Input
+        id="normal_max"
+        type="number"
+        name="normal_max"
+        defaultValue={formData.normal_max ?? ""}
+        onChange={(e) => handleNumberChange("normal_max", e.target.value)}
+        placeholder="0.0"
+        step="any"
+      />
+    </div>
+  </div>
+</fieldset>
 
-        <fieldset className="space-y-4">
-          <legend className="text-sm font-semibold text-muted-foreground">
-            Valores Intermediários
-          </legend>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="intermediary_min" className="block font-medium">
-                Mínimo
-              </label>
-              <Input
-                id="intermediary_min"
-                type="number"
-                name="intermediary_min"
-                defaultValue={formData.intermediary_min ?? ""}
-                onChange={(e) => handleNumberChange("intermediary_min", e.target.value)}
-                placeholder="0.0"
-                step="any"
-              />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="intermediary_max" className="block font-medium">
-                Máximo
-              </label>
-              <Input
-                id="intermediary_max"
-                type="number"
-                name="intermediary_max"
-                defaultValue={formData.intermediary_max ?? ""}
-                onChange={(e) => handleNumberChange("intermediary_max", e.target.value)}
-                placeholder="0.0"
-                step="any"
-              />
-            </div>
-          </div>
-        </fieldset>
+<fieldset className="space-y-4">
+  <legend className="text-sm font-semibold text-muted-foreground">
+    Valores Intermediários
+  </legend>
+  <div className="flex gap-6">
+    <div className="flex flex-col flex-1">
+      <label htmlFor="intermediary_min" className="font-medium mb-1">
+        Mínimo
+      </label>
+      <Input
+        id="intermediary_min"
+        type="number"
+        name="intermediary_min"
+        defaultValue={formData.intermediary_min ?? ""}
+        onChange={(e) => handleNumberChange("intermediary_min", e.target.value)}
+        placeholder="0.0"
+        step="any"
+        className="rounded-xl"
+      />
+    </div>
+    <div className="flex flex-col flex-1">
+      <label htmlFor="intermediary_max" className="font-medium mb-1">
+        Máximo
+      </label>
+      <Input
+        id="intermediary_max"
+        type="number"
+        name="intermediary_max"
+        defaultValue={formData.intermediary_max ?? ""}
+        onChange={(e) => handleNumberChange("intermediary_max", e.target.value)}
+        placeholder="0.0"
+        step="any"
+        className="rounded-xl"
+      />
+    </div>
+  </div>
+</fieldset>
+
 
         <div className="space-y-2">
           <label htmlFor="hard_value" className="block font-medium">
@@ -219,10 +223,14 @@ export default function ExamDetailsModal({
         </div>
 
         <DialogFooter className="flex justify-end gap-3 pt-4">
-          <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button type="submit">Salvar</Button>
+            <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+                      <Button
+            type="submit"
+            className="w-full bg-blue-600 text-white hover:bg-blue-700 rounded-xl shadow-md transition-colors"
+          >
+            <PlusCircle className="w-4 h-4 mr-2" />Salvar</Button>
         </DialogFooter>
       </form>
     </DialogContent>

@@ -30,6 +30,7 @@ model User {
   isTwoFactorEnabled Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
 
+   exam_data     Exam_data[] // relaciona com os exames do usuário
 
 }
 model Account {
@@ -87,16 +88,32 @@ model TwoFactorConfirmation {
 }
 
 model Exam {
-  id  String @id @default(cuid())
-  name  String
-  group String
-  normal_min Float?
-  normal_max Float?
+  id             String       @id @default(cuid())
+  name           String
+  group          String
+  normal_min     Float?
+  normal_max     Float?
   intermediary_min Float?
   intermediary_max Float?
-  hard_value Float?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
-
+  hard_value     Float?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt @default(now())
+  
+  exam_data      Exam_data[]  @relation("ExamToExamData")
+  
   @@index([id])
+}
+
+model Exam_data {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  show      Boolean
+  examId    String
+  userId    String
+  value     Float?
+  notes     String?
+  dateExam  String?
+  
+  exam      Exam     @relation("ExamToExamData", fields: [examId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
