@@ -49,3 +49,21 @@ export async function getAllUserExam() {
 
   return exams;
 }
+
+export async function getAllUserExamById(id: string) {
+  if (!id) return null;
+  console.log("aqui",id)
+  const exams = await db.exam_data.findMany({
+    where: {
+      userId:id
+    },
+    include: {
+      exam: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  console.log("chegou", exams)
+  return exams;
+}

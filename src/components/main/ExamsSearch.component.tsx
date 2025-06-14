@@ -1,10 +1,14 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card'; // Assumindo que você tem shadcn/ui Card
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Search, X, FolderKanban, CalendarDays, Info, FlaskConical, AlertCircle, TrendingDown, TrendingUp, CheckCircle } from 'lucide-react'; // Importando ícones Lucide
+import { Search, X, FolderKanban, CalendarDays, Info, FlaskConical, AlertCircle, TrendingDown, TrendingUp, CheckCircle, Trash2 } from 'lucide-react'; // Importando Trash2 para o ícone de lixeira
+import { deleteExam_data } from '@/actions/exam_data';
+// As importações de 'next/navigation' e da server action foram removidas para compatibilidade com o ambiente Canvas.
+// import { useRouter } from 'next/navigation';
+// import { deleteExam_data } from '@/lib/exam-actions';
 
 // -------------------------------------------------------------------------
 // *** IMPORTANTE: CERTIFIQUE-SE DE QUE ESTA É A ÚNICA DEFINIÇÃO DE UserExam ***
@@ -13,11 +17,11 @@ interface Exam {
   id: string;
   name: string;
   group: string;
-  normal_min: number | null; // <--- Alterado para aceitar null
-  normal_max: number | null; // <--- Alterado para aceitar null
-  intermediary_min: number | null; // <--- Alterado para aceitar null
-  intermediary_max: number | null; // <--- Alterado para aceitar null
-  hard_value: number | null; // <--- Alterado para aceitar null
+  normal_min: number | null;
+  normal_max: number | null;
+  intermediary_min: number | null;
+  intermediary_max: number | null;
+  hard_value: number | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,7 +31,7 @@ interface UserExam {
   value: number | null;
   notes: string | null;
   dateExam: string | null;
-  show: boolean;
+  show: boolean; // Propriedade 'show' para soft delete
   userId: string;
   examId: string;
   createdAt: Date | string | null;
@@ -128,19 +132,21 @@ const getValueStatus = (value: number | null, exam: Exam) => {
 
 // Componente individual do cartão do exame
 const ExamCard = ({
+  id, // Recebe o ID do exame para a função de delete
   exam,
   value,
   notes,
   dateExam,
   createdAt,
-}: Pick<UserExam, 'exam' | 'value' | 'notes' | 'dateExam' | 'createdAt'>) => {
+  onDelete, // Função de callback para deletar
+}: Pick<UserExam, 'exam' | 'value' | 'notes' | 'dateExam' | 'createdAt'> & { id: string; onDelete: (id: string) => void; }) => {
   const { status, icon: StatusIcon, colorClass } = getValueStatus(value, exam);
 
   return (
     <Card
       tabIndex={0}
       className="rounded-xl border border-gray-100 bg-white shadow-sm
-                transition-all hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
+                transition-all hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 relative group" // Adicionado 'relative' e 'group' para posicionar o botão de lixeira
       role="region"
       aria-labelledby={`exam-title-${exam.id}`}
     >
@@ -159,6 +165,15 @@ const ExamCard = ({
             <span>{exam.group}</span>
           </div>
         </header>
+
+        {/* Botão de lixeira (soft delete) */}
+        <button
+          onClick={() => onDelete(id)}
+          aria-label={`Excluir exame ${exam.name}`}
+          className="absolute top-4 right-4 p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <Trash2 className="h-5 w-5" />
+        </button>
 
         {/* Valor informado com destaque e status visual */}
         <section className={`p-4 rounded-lg border flex items-center justify-between ${colorClass}`}>
@@ -203,7 +218,7 @@ const ExamCard = ({
         {/* Notas, destacadas */}
         {notes && (
           <section className="mt-2 bg-indigo-50 border-l-4 border-indigo-400 rounded-md p-3 flex items-start gap-2 text-indigo-900 text-sm italic shadow-sm">
-            <Info className="h-5 w-5 flex-shrink-0 text-indigo-600" aria-hidden="true" />
+            <Info className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
             <span>Observações: {notes}</span>
           </section>
         )}
@@ -220,30 +235,164 @@ const ExamCard = ({
   );
 };
 
+// --- Componente de Modal de Confirmação ---
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }: {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm transform transition-all scale-100 opacity-100 duration-300 ease-out">
+        <h3 className="text-xl font-bold text-gray-900 mb-4">{title}</h3>
+        <p className="text-gray-700 mb-6">{message}</p>
+        <div className="flex justify-end space-x-3">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 rounded-lg text-gray-700 border border-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-5 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+          >
+            Confirmar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- Componente de Notificação (Toast) ---
+const NotificationToast = ({ message, type, isOpen, onClose }: {
+  message: string;
+  type: 'success' | 'error';
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
+  const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+  const textColor = 'text-white';
+
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 3000); // Oculta o toast após 3 segundos
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full shadow-lg ${bgColor} ${textColor} transition-all duration-300 z-50`}>
+      <p className="font-medium">{message}</p>
+    </div>
+  );
+};
+
+
 export const MyExamsClient = ({ exams }: MyExamsClientProps) => {
+  // Estado local para gerenciar os exames e refletir as alterações no cliente
+  const [currentExams, setCurrentExams] = useState<UserExam[]>(exams);
   const [search, setSearch] = useState('');
 
-  // Filtra exames com base no termo de busca
+  // Estados para o Modal de Confirmação
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [examToDeleteId, setExamToDeleteId] = useState<string | null>(null);
+
+  // Estados para a Notificação (Toast)
+  const [isToastOpen, setIsToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
+
+  // Removido: const router = useRouter(); // Removido para compatibilidade com o ambiente Canvas
+
+
+  // Sincroniza o estado local com a prop 'exams' se ela mudar
+  // Útil se a prop 'exams' puder ser atualizada de fora do componente
+  useMemo(() => {
+    setCurrentExams(exams);
+  }, [exams]);
+
+
+  // Filtra exames com base no termo de busca E também filtra para mostrar apenas exames com 'show: true'
   const filteredExams = useMemo(() => {
     const term = search.trim().toLowerCase();
-    if (!term) return exams;
+    // Primeiro, filtra para mostrar apenas os exames visíveis (show: true)
+    const visibleExams = currentExams.filter(exam => exam.show === true); // Usa o estado local 'currentExams'
 
-    return exams.filter(({ exam }) =>
+    if (!term) return visibleExams;
+
+    return visibleExams.filter(({ exam }) =>
       exam?.name.toLowerCase().includes(term)
     );
-  }, [exams, search]);
+  }, [currentExams, search]); // Dependência ajustada para 'currentExams'
 
-  // Handler para a mudança do input de busca
   const onSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value),
     []
   );
 
-  // Handler para limpar a busca
   const clearSearch = useCallback(() => setSearch(''), []);
 
+  // Abre o modal de confirmação
+  const handleOpenDeleteModal = useCallback((id: string) => {
+    setExamToDeleteId(id);
+    setIsModalOpen(true);
+  }, []);
+
+  // Confirmação de exclusão (chamada pelo modal)
+  const handleConfirmDelete = useCallback(async () => {
+    if (!examToDeleteId) return;
+
+    setIsModalOpen(false); // Fecha o modal
+
+    try {
+      // Simula a atualização do banco de dados alterando o estado local
+      setCurrentExams(prevExams =>
+        prevExams.map(exam =>
+          exam.id === examToDeleteId ? { ...exam, show: false } : exam
+        )
+      );
+      setToastMessage('Exame ocultado com sucesso!');
+      setToastType('success');
+      setIsToastOpen(true);
+      // console.log(`Soft delete simulado para o exame com ID: ${examToDeleteId}.`);
+      // Em um aplicativo Next.js real, aqui você chamaria sua server action:
+      await deleteExam_data(examToDeleteId);
+      // E então router.refresh(); para buscar os dados atualizados do servidor.
+    } catch (error) {
+      console.error("Erro ao simular soft delete:", error);
+      setToastMessage('Erro ao ocultar exame.');
+      setToastType('error');
+      setIsToastOpen(true);
+    } finally {
+      setExamToDeleteId(null); // Limpa o ID após a operação
+    }
+  }, [examToDeleteId]);
+
+  // Fecha o modal de confirmação
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setExamToDeleteId(null); // Limpa o ID ao fechar o modal
+  }, []);
+
+  // Fecha a notificação (toast)
+  const handleCloseToast = useCallback(() => {
+    setIsToastOpen(false);
+    setToastMessage('');
+  }, []);
+
+
   return (
-    <section className="space-y-10 max-w-7xl mx-auto px-4 py-8 md:py-12  min-h-screen">
+    <section className="space-y-10 max-w-7xl mx-auto px-4 py-8 md:py-12 min-h-screen">
       {/* Componente de busca */}
       <SearchInput value={search} onChange={onSearchChange} onClear={clearSearch} />
 
@@ -263,15 +412,34 @@ export const MyExamsClient = ({ exams }: MyExamsClientProps) => {
           {filteredExams.map(({ id, exam, value, notes, dateExam, createdAt }) => (
             <ExamCard
               key={id}
+              id={id} // Passa o ID do exame para o ExamCard
               exam={exam}
               value={value}
               notes={notes}
               dateExam={dateExam}
               createdAt={createdAt}
+              onDelete={handleOpenDeleteModal} // Agora abre o modal ao clicar em deletar
             />
           ))}
         </div>
       )}
+
+      {/* Modal de Confirmação */}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmDelete}
+        title="Confirmar Ocultação de Exame"
+        message="Tem certeza que deseja ocultar este exame? Ele não será removido permanentemente, apenas ficará invisível."
+      />
+
+      {/* Notificação (Toast) */}
+      <NotificationToast
+        isOpen={isToastOpen}
+        onClose={handleCloseToast}
+        message={toastMessage}
+        type={toastType}
+      />
     </section>
   );
 };

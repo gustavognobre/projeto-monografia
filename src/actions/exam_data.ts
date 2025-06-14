@@ -26,3 +26,21 @@ export async function createExam_data(formData: FormData) {
     },
   });
 }
+
+export async function deleteExam_data(id: string) {
+  try {
+    await db.exam_data.update({
+      where: {
+        id: id, // O ID do registro a ser atualizado
+      },
+      data: {
+        show: false, // Define a propriedade 'show' como false para o soft delete
+      },
+    });
+    console.log(`Registro de exame com ID ${id} foi marcado como inativo (soft delete).`);
+  } catch (error) {
+    console.error(`Erro ao realizar soft delete no registro de exame ${id}:`, error);
+    // Você pode querer relançar o erro ou retornar um status de falha
+    throw new Error("Falha ao realizar soft delete no registro de exame.");
+  }
+}
