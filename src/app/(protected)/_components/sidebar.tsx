@@ -6,6 +6,7 @@ import {
     FilePlus,
     FileSymlink,
     Home,
+    PersonStanding,
     Settings,
     TableCellsSplit,
     Users,
@@ -49,7 +50,8 @@ export function SideBar() {
         { icon: TableCellsSplit, label: "Parametros", link: "/parameter", role: UserRole.ADMIN },
         {icon: FilePlus, label: "Adicionar Exame", link: "/new-exam"},
         {icon: FileChartColumn, label: "Meus Exames", link: "/my-exams"},
-        {icon: FileSymlink, label: "Adicionar Paciente", link: "/my-patient"},
+        {icon: FileSymlink, label: "Adicionar Paciente", link: "/my-patient",role: UserRole.ADMIN},
+        {icon: PersonStanding, label: "Antropometria", link: "/my-anthropometry",},
     ];
 
     return (

@@ -36,6 +36,7 @@ interface ExamChartProps {
     intermediary_min?: number | null;
     intermediary_max?: number | null;
     hard_value?: number | null;
+    unit?:string|null;
   };
   examData: {
     id: string;
@@ -45,6 +46,7 @@ interface ExamChartProps {
 }
 
 export function ExamChart({ examInfo, examData }: ExamChartProps) {
+  console.log(examInfo.unit)
   const examName = examInfo.name
     ? examInfo.name.charAt(0).toUpperCase() + examInfo.name.slice(1).toLowerCase()
     : "Exame";
@@ -89,7 +91,7 @@ export function ExamChart({ examInfo, examData }: ExamChartProps) {
         order: 1,
       },
       {
-        label: "Normal (Área Inferior)",
+        label: "",
         data: normalMinLine,
         borderColor: "transparent",
         backgroundColor: "transparent",
@@ -107,7 +109,7 @@ export function ExamChart({ examInfo, examData }: ExamChartProps) {
         order: 1,
       },
       {
-        label: "Atenção (Área Inferior)",
+        label: "",
         data: intermediaryMinLine,
         borderColor: "transparent",
         backgroundColor: "transparent",
@@ -125,7 +127,7 @@ export function ExamChart({ examInfo, examData }: ExamChartProps) {
         order: 1,
       },
       {
-        label: "Crítico (Área Inferior)",
+        label: "",
         data: criticalBaseLine,
         borderColor: "transparent",
         backgroundColor: "transparent",
@@ -158,12 +160,23 @@ export function ExamChart({ examInfo, examData }: ExamChartProps) {
       },
     },
     scales: {
-      y: { beginAtZero: false },
+      y: {
+        beginAtZero: false,
+        title: {
+          display: !!examInfo.unit,
+          text: examInfo.unit || "",
+          font: {
+            size: 14,
+            weight: "bold",
+          },
+        },
+      },
       x: {
         ticks: {
-          maxRotation: 45,
-          minRotation: 45,
-          font: { size: 12 },
+          display: false, // se quiser manter sem labels no eixo X
+        },
+        grid: {
+          display: false,
         },
       },
     },

@@ -19,6 +19,7 @@ export async function createExam(formData: FormData) {
             intermediary_min: toNullableNumber(formData.get("intermediary_min")),
             intermediary_max: toNullableNumber(formData.get("intermediary_max")),
             hard_value: toNullableNumber(formData.get("hard_value")),
+            unit:formData.get("unit") as string, 
         },
     });
     redirect("/parameter");

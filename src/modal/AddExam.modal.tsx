@@ -1,19 +1,10 @@
 "use client";
 
+import { createExam_data } from "@/actions/exam_data";
 // Removido import { createExam_data } from "@/actions/exam_data"; pois não é suportado no ambiente.
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useRef, useState } from "react";
-
-// Placeholder para simular a função createExam_data
-const createExam_data = async (formData: FormData) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log("Dados do formulário simulados para criação:", Object.fromEntries(formData.entries()));
-      resolve({ success: true }); // Simula uma resposta de sucesso
-    }, 1000); // Simula um atraso de rede
-  });
-};
 
 interface Exam {
   id: string;
@@ -24,6 +15,7 @@ interface Exam {
   intermediary_min?: number | null;
   intermediary_max?: number | null;
   hard_value?: number | null;
+  unit?:string|null;
 }
 
 interface ExamModalProps {
@@ -108,6 +100,12 @@ export default function ExamModal({ exam, onClose, user }: ExamModalProps) {
                 ≥ {exam.hard_value ?? "N/A"}
               </p>
             </div>
+            <div>
+              <p className="text-gray-600 font-medium text-xs uppercase mb-0.5">Unidade de Medida</p> {/* Adicionado mb-0.5 */}
+              <p className="px-3 py-1 rounded-md inline-flex items-center font-medium">
+                ≥ {exam.unit ?? "N/A"}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -172,7 +170,19 @@ export default function ExamModal({ exam, onClose, user }: ExamModalProps) {
               placeholder="Ex: jejum, medicamento, histórico relevante, etc."
             />
           </div>
-
+          <div>
+            <label htmlFor="lab" className="block text-sm font-medium text-gray-700 mb-1">
+              Laboratório
+            </label>
+             <input
+              type="text"
+              id="lab"
+              name="lab"
+              className="w-full border h-10 border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
+              placeholder="Em qual Laboratório foi feito?"
+              onChange={() => setErrorMessage(null)} // Limpa o erro ao digitar
+            />
+          </div>
           <div>
             <label htmlFor="dateExam" className="block text-sm font-medium text-gray-700 mb-1">
               Data do Exame <span className="text-red-500">*</span>

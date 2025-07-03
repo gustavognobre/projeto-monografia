@@ -39,6 +39,7 @@ interface Exam {
   intermediary_min?: number | null;
   intermediary_max?: number | null;
   hard_value?: number | null;
+  unit?:string | null;
 }
 
 interface ExamDetailsModalProps {
@@ -221,7 +222,19 @@ export default function ExamDetailsModal({
             step="any"
           />
         </div>
-
+        <div className="space-y-2">
+          <label htmlFor="unit" className="block font-medium">
+            Unidade
+          </label>
+          <Input
+            id="unit"
+            name="unit"
+            defaultValue={formData.unit ?? ""}
+            onChange={(e) => handleNumberChange("unit", e.target.value)}
+            placeholder="Ex: /mg"
+            step="any"
+          />
+        </div>
         <DialogFooter className="flex justify-end gap-3 pt-4">
             <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
               Cancelar

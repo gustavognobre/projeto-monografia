@@ -67,3 +67,19 @@ export async function getAllUserExamById(id: string) {
   console.log("chegou", exams)
   return exams;
 }
+
+export async function getAllAnthropometry() {
+  const thisUser = await currentUser();
+  if (!thisUser) return null;
+
+  const anthropometry = await db.anthropometry.findMany({
+    where: {
+      userId: thisUser.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return anthropometry;
+}

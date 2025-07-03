@@ -135,6 +135,17 @@ export default function AddExamForm({ onSuccess }: { onSuccess?: () => void }) {
           step="any"
         />
       </div>
+            <div className="space-y-1">
+        <label htmlFor="unit" className="block font-medium text-sm">
+          Unidade de Medida
+        </label>
+        <Input
+          id="unit"
+          name="unit"
+          placeholder="Unidade de Medida"
+          step="any"
+        />
+      </div>
 
       <Button
         type="submit"

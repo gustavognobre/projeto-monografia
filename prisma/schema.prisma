@@ -30,7 +30,8 @@ model User {
   isTwoFactorEnabled Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
 
-   exam_data     Exam_data[] // relaciona com os exames do usuário
+  exam_data     Exam_data[] 
+  anthropometry Anthropometry[]
 
   medicalPatients      Patient[] @relation("MedicalUserRelation")
   patientProfiles      Patient[] @relation("PatientUserRelation")
@@ -99,6 +100,7 @@ model Exam {
   intermediary_min Float?
   intermediary_max Float?
   hard_value     Float?
+  unit           String
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt @default(now())
   
@@ -115,6 +117,7 @@ model Exam_data {
   userId    String
   value     Float?
   notes     String?
+  lab       String?
   dateExam  String?
   
   exam      Exam     @relation("ExamToExamData", fields: [examId], references: [id], onDelete: Cascade)
@@ -129,4 +132,26 @@ model Patient {
 
   medicalUser User @relation("MedicalUserRelation", fields: [medicalId], references: [id], onDelete: Cascade)
   patientUser User @relation("PatientUserRelation", fields: [patientId], references: [id], onDelete: Cascade)
+}
+
+model Anthropometry {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  show       Boolean
+  userId     String
+  height     Float?
+  weight     Float?
+  chest      Float?
+  shoulder   Float?
+  rightArm   Float?
+  leftArm    Float?
+  waist      Float?
+  rightLeg   Float?
+  leftLeg    Float?
+  rightCalf  Float?
+  leftCalf   Float?
+  notes      String?
+  dateExam   String?
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

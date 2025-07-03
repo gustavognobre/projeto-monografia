@@ -35,6 +35,7 @@ interface UserExam {
   userId: string;
   examId: string;
   createdAt: Date | string | null;
+  lab: string;
   exam: Exam;
 }
 
@@ -138,8 +139,9 @@ const ExamCard = ({
   notes,
   dateExam,
   createdAt,
+  lab,
   onDelete, // Função de callback para deletar
-}: Pick<UserExam, 'exam' | 'value' | 'notes' | 'dateExam' | 'createdAt'> & { id: string; onDelete: (id: string) => void; }) => {
+}: Pick<UserExam, 'exam' | 'value' | 'notes' | 'dateExam' | 'createdAt' | 'lab'> & { id: string; onDelete: (id: string) => void; }) => {
   const { status, icon: StatusIcon, colorClass } = getValueStatus(value, exam);
 
   return (
@@ -158,12 +160,12 @@ const ExamCard = ({
             className="text-2xl font-extrabold text-gray-900 truncate"
             title={exam.name}
           >
-            {exam.name}
+            {exam.name} {lab}
           </h3>
           <div className="flex items-center gap-2 text-sm text-blue-600 font-medium">
             <FlaskConical className="h-5 w-5" aria-hidden="true" />
             <span>{exam.group}</span>
-          </div>
+          </div>          
         </header>
 
         {/* Botão de lixeira (soft delete) */}
@@ -409,7 +411,7 @@ export const MyExamsClient = ({ exams }: MyExamsClientProps) => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {filteredExams.map(({ id, exam, value, notes, dateExam, createdAt }) => (
+          {filteredExams.map(({ id, exam, value, notes, dateExam, createdAt, lab }) => (
             <ExamCard
               key={id}
               id={id} // Passa o ID do exame para o ExamCard
@@ -418,6 +420,7 @@ export const MyExamsClient = ({ exams }: MyExamsClientProps) => {
               notes={notes}
               dateExam={dateExam}
               createdAt={createdAt}
+              lab={lab}
               onDelete={handleOpenDeleteModal} // Agora abre o modal ao clicar em deletar
             />
           ))}

@@ -22,6 +22,7 @@ export async function createExam_data(formData: FormData) {
       userId: formData.get("userId") as string,
       value: toNullableNumber(formData.get("value")),
       notes: formData.get("notes") as string,
+      lab: formData.get("lab") as string,
       dateExam: formData.get("dateExam") as string,
     },
   });
@@ -43,4 +44,28 @@ export async function deleteExam_data(id: string) {
     // Você pode querer relançar o erro ou retornar um status de falha
     throw new Error("Falha ao realizar soft delete no registro de exame.");
   }
+}
+
+
+export async function createAnthropometry(formData: FormData) {
+  await db.anthropometry.create({
+    data: {
+      createdAt: new Date(),
+      show: formData.get("show") === "true",
+      userId: formData.get("userId") as string,
+      height: toNullableNumber(formData.get("height")),
+      weight: toNullableNumber(formData.get("weight")),
+      chest: toNullableNumber(formData.get("chest")),
+      shoulder: toNullableNumber(formData.get("shoulder")),
+      rightArm: toNullableNumber(formData.get("rightArm")),
+      leftArm: toNullableNumber(formData.get("leftArm")),
+      waist: toNullableNumber(formData.get("waist")),
+      rightLeg: toNullableNumber(formData.get("rightLeg")),
+      leftLeg: toNullableNumber(formData.get("leftLeg")),
+      rightCalf: toNullableNumber(formData.get("rightCalf")),
+      leftCalf: toNullableNumber(formData.get("leftCalf")),
+      notes: formData.get("notes") as string | null,
+      dateExam: formData.get("dateExam") as string | null,
+    },
+  });
 }
