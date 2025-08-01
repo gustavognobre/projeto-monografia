@@ -82,62 +82,68 @@ export default function SimpleExamCards({ exams, idade, gender, user }: Props) {
     };
 
     return (
-        <main className="max-w-7xl mx-auto px-6 py-8 min-h-screen">
-            <h1 className="text-4xl font-bold mb-8 text-center text-gray-900">
-                Exames disponíveis <span className="text-indigo-600">({filteredExams.length})</span>
-            </h1>
+<main className="max-w-7xl mx-auto px-6 py-8 min-h-screen">
+  <h1 className="text-4xl font-bold mb-8 text-center text-gray-900">
+    Exames disponíveis <span className="text-blue-600">({filteredExams.length})</span>
+  </h1>
 
-            {/* Search input */}
-            <div className="max-w-md mx-auto mb-10">
-                <input
-                    type="search"
-                    placeholder="Buscar exame pelo nome..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition"
-                    aria-label="Buscar exame pelo nome"
-                />
-            </div>
+  {/* Search input */}
+  <div className="max-w-md mx-auto mb-10">
+    <input
+      type="search"
+      placeholder="Buscar exame pelo nome..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="w-full rounded-md border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+      aria-label="Buscar exame pelo nome"
+    />
+  </div>
 
-            {filteredExams.length === 0 ? (
-                <p className="text-center text-gray-500 text-lg">Nenhum exame encontrado.</p>
-            ) : (
-                <ul role="list" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                    {filteredExams.map((exam) => (
-                        <li
-                            key={exam.id}
-                            onClick={() => openModal(exam)}
-                            className="bg-white rounded-xl p-5 shadow hover:shadow-md cursor-pointer transition duration-200 border border-gray-200 flex flex-col gap-3 hover:border-blue-300"
-                        >
-                            {/* Esquerda: Nome e grupo */}
-                            <div className="flex-1 min-w-0">
-                                <h2 className="text-xl font-semibold text-gray-900 break-words leading-snug">
-                                    {exam.name}
-                                </h2>
+  {filteredExams.length === 0 ? (
+    <p className="text-center text-gray-500 text-lg">Nenhum exame encontrado.</p>
+  ) : (
+    <ul
+      role="list"
+      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8"
+    >
+      {filteredExams.map((exam) => (
+        <li
+          key={exam.id}
+          onClick={() => openModal(exam)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") openModal(exam);
+          }}
+          tabIndex={0}
+          role="button"
+          className="bg-white rounded-xl p-5 shadow border border-gray-200 flex flex-col gap-3 cursor-pointer transition duration-200 hover:shadow-md hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          aria-label={`Abrir detalhes do exame ${exam.name}, grupo ${exam.group}`}
+        >
+          <div className="flex-1 min-w-0">
+            <h2 className="text-xl font-semibold text-gray-900 break-words leading-snug">
+              {exam.name}
+            </h2>
+            <p className="mt-1 inline-block text-xs font-semibold rounded-full px-3 py-1 bg-blue-100 text-blue-600 tracking-wide select-none">
+              {exam.group}
+            </p>
+          </div>
 
-                                <p className="mt-1 inline-block text-xs font-semibold rounded-full px-3 py-1 bg-indigo-100 text-indigo-800 tracking-wide select-none">
-                                    {exam.group}
-                                </p>
-                            </div>
+          <div className="mt-4 md:mt-0 md:ml-6 flex flex-col items-end whitespace-nowrap min-w-[120px]">
+            <span className="text-xs font-medium text-gray-500 uppercase">
+              Valores normais
+            </span>
+            <p className="text-sm text-gray-700">
+              {exam.normal_min ?? "-"} — {exam.normal_max ?? "-"}
+            </p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
 
-                            {/* Direita: Valores normais */}
-                            <div className="mt-4 md:mt-0 md:ml-6 flex flex-col items-end whitespace-nowrap min-w-[120px]">
-                                <span className="text-xs font-medium text-gray-500 uppercase">
-                                    Valores normais
-                                </span>
-                                <p className="text-sm text-gray-700">
-                                    <span className="font-medium">Valores normais:</span>{" "}
-                                    {exam.normal_min ?? "-"} — {exam.normal_max ?? "-"}
-                                </p>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            )}
+  {showModal && selectedExam && (
+    <ExamModal exam={selectedExam} onClose={closeModal} user={user} />
+  )}
+</main>
 
-            {showModal && selectedExam && (
-                <ExamModal exam={selectedExam} onClose={closeModal} user={user} />
-            )}
-        </main>
     );
 }

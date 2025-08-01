@@ -27,105 +27,102 @@ interface Anthropometry {
   dateExam: string | null;
 }
 
-
 interface Props {
-    anthropometry: Anthropometry[];
-    user: any;
+  anthropometry: Anthropometry[];
+  user: any;
 }
 
 const formatDate = (date: string | null): string => {
-    return date ? new Date(date).toLocaleDateString("pt-BR") : "Sem data";
+  return date ? new Date(date).toLocaleDateString("pt-BR") : "Sem data";
 };
 
 export default function NewAntropometria({ anthropometry, user }: Props) {
-    const router = useRouter();
-    const [openAddModal, setOpenAddModal] = useState(false);
+  const router = useRouter();
+  const [openAddModal, setOpenAddModal] = useState(false);
 
-    const renderMeasure = (label: string, value: number | null) => (
-        <div className="flex items-center">
-            <Ruler className="w-4 h-4 text-blue-500 mr-2 flex-shrink-0" />
-            <strong>{label}</strong>
-            <span className="ml-1">{value ?? "-"} cm</span>
-        </div>
-    );
+  const renderMeasure = (label: string, value: number | null) => (
+    <div className="flex items-center text-sm text-muted-foreground">
+      <Ruler className="w-4 h-4 text-primary mr-2" />
+      <strong className="text-primary">{label}</strong>
+      <span className="ml-1">{value ?? "-"} cm</span>
+    </div>
+  );
 
-    return (
-        <div className="max-w-6xl mx-auto px-4 pt-24">
-            <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                {/* Card de Adição */}
-                <Card
-                    className="border-2 border-dashed border-primary-400 hover:bg-primary-50
-                     flex flex-col items-center justify-center cursor-pointer transition-shadow
-                     rounded-lg shadow-sm hover:shadow-md p-8 text-primary-600"
-                    onClick={() => setOpenAddModal(true)}
-                    aria-label="Adicionar nova antropometria"
-                >
-                    <Plus className="w-10 h-10 mb-3" />
-                    <p className="text-lg font-semibold select-none">Adicionar Antropometria</p>
-                </Card>
-                <Dialog open={openAddModal} onOpenChange={setOpenAddModal}>
-                    <DialogContent className="max-w-lg sm:max-w-xl mx-auto rounded-lg p-6">
-                        <DialogHeader>
-                            <DialogTitle className="text-xl font-bold">
-                                Cadastrar Nova Antropometria
-                            </DialogTitle>
-                        </DialogHeader>
-                        <AddAnthropometryForm
-                            user={user}
-                            onSuccess={() => {
-                                router.refresh();
-                                setOpenAddModal(false);
-                            }}
-                        />
-                    </DialogContent>
-                </Dialog>
+  return (
+    <div className="max-w-6xl mx-auto px-4 pt-24">
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {/* Botão de Adição */}
+        <Card
+          onClick={() => setOpenAddModal(true)}
+          className="border-2 border-dashed border-primary/50 bg-muted/40 text-primary
+                     hover:bg-primary/10 hover:shadow-md cursor-pointer transition rounded-2xl p-6 flex flex-col items-center justify-center"
+          aria-label="Adicionar nova antropometria"
+          role="button"
+        >
+          <Plus className="w-8 h-8 mb-2" />
+          <p className="text-base font-semibold select-none">Nova Antropometria</p>
+        </Card>
 
-                {/* Lista de Registros */}
-                {anthropometry.length > 0 ? (
-                    anthropometry.map((data) => (
-                        <Card
-                            key={data.id}
-                            className="relative rounded-lg border border-gray-200 shadow-sm
-                         hover:shadow-lg transition cursor-pointer bg-white"
-                            tabIndex={0}
-                            role="button"
-                            aria-label={`Detalhes da antropometria ${data.id.slice(0, 6)}`}
-                        >
-                            <CardContent className="p-6">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-lg sm:text-xl font-bold text-gray-800">
-                                        Registro em {formatDate(data.dateExam)}
-                                    </h3>
-                                </div>
+        <Dialog open={openAddModal} onOpenChange={setOpenAddModal}>
+          <DialogContent className="max-w-lg sm:max-w-xl mx-auto rounded-2xl p-6">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-primary">
+                Cadastrar Nova Antropometria
+              </DialogTitle>
+            </DialogHeader>
+            <AddAnthropometryForm
+              user={user}
+              onSuccess={() => {
+                router.refresh();
+                setOpenAddModal(false);
+              }}
+            />
+          </DialogContent>
+        </Dialog>
 
-                                <div className="gap-x-6 gap-y-3 text-gray-700 text-sm">
-                                    {renderMeasure("Altura:", data.height)}
-                                    {renderMeasure("Peso:", data.weight)}
-                                    {renderMeasure("Tórax:", data.chest)}
-                                    {renderMeasure("Ombro:", data.shoulder)}
-                                    {renderMeasure("Braço D:", data.rightArm)}
-                                    {renderMeasure("Braço E:", data.leftArm)}
-                                    {renderMeasure("Cintura:", data.waist)}
-                                    {renderMeasure("Coxa D:", data.rightLeg)}
-                                    {renderMeasure("Coxa E:", data.leftLeg)}
-                                    {renderMeasure("Pant. D:", data.rightCalf)}
-                                    {renderMeasure("Pant. E:", data.leftCalf)}
-                                </div>
+        {/* Lista de Registros */}
+        {anthropometry.length > 0 ? (
+          anthropometry.map((data) => (
+            <Card
+              key={data.id}
+              className="relative rounded-2xl border shadow-sm hover:shadow-md transition bg-card cursor-pointer"
+              tabIndex={0}
+              aria-label={`Detalhes da antropometria ${data.id.slice(0, 6)}`}
+              role="button"
+            >
+              <CardContent className="p-6 space-y-4">
+                <h3 className="text-lg font-semibold text-primary">
+                  Registro em {formatDate(data.dateExam)}
+                </h3>
 
-                                {data.notes && (
-                                    <div className="mt-4 pt-3 border-t border-gray-100 text-gray-600 text-sm italic">
-                                        <strong>Notas:</strong> {data.notes}
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    ))
-                ) : (
-                    <div className="col-span-full text-center text-gray-400 border border-dashed rounded-lg bg-gray-50 p-8">
-                        Nenhuma antropometria encontrada.
-                    </div>
+                <div className="space-y-1">
+                  {renderMeasure("Altura:", data.height)}
+                  {renderMeasure("Peso:", data.weight)}
+                  {renderMeasure("Tórax:", data.chest)}
+                  {renderMeasure("Ombro:", data.shoulder)}
+                  {renderMeasure("Braço D:", data.rightArm)}
+                  {renderMeasure("Braço E:", data.leftArm)}
+                  {renderMeasure("Cintura:", data.waist)}
+                  {renderMeasure("Coxa D:", data.rightLeg)}
+                  {renderMeasure("Coxa E:", data.leftLeg)}
+                  {renderMeasure("Pant. D:", data.rightCalf)}
+                  {renderMeasure("Pant. E:", data.leftCalf)}
+                </div>
+
+                {data.notes && (
+                  <div className="pt-3 border-t text-sm text-muted-foreground italic">
+                    <strong>Notas:</strong> {data.notes}
+                  </div>
                 )}
-            </section>
-        </div>
-    );
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <div className="col-span-full text-center text-muted-foreground border border-dashed rounded-xl bg-muted/30 p-8">
+            Nenhuma antropometria encontrada.
+          </div>
+        )}
+      </section>
+    </div>
+  );
 }

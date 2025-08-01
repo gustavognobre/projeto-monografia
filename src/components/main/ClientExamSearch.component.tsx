@@ -26,12 +26,14 @@ export default function ClientExamSearch({ exams }: Props) {
   return (
     <main className="flex flex-col items-center px-6 py-10 bg-white min-h-screen">
       {/* Search input */}
-      <section className="w-full max-w-lg mb-10">
-        <label htmlFor="search" className="sr-only">Buscar exame</label>
-        <div className="relative text-gray-400 focus-within:text-blue-600">
+      <section className="w-full max-w-lg mb-12">
+        <label htmlFor="search" className="sr-only">
+          Buscar exame
+        </label>
+        <div className="relative text-blue-400 focus-within:text-blue-600">
           <Search
             size={20}
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none"
+            className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-blue-400"
             aria-hidden="true"
           />
           <input
@@ -39,33 +41,48 @@ export default function ClientExamSearch({ exams }: Props) {
             type="search"
             placeholder="Buscar exame..."
             autoComplete="off"
+            spellCheck={false}
+            aria-label="Buscar exame"
             className="
               block w-full
-              bg-gray-100
               rounded-md
+              bg-gray-100
               py-3 pl-10 pr-4
               text-gray-900
-              placeholder-gray-400
+              placeholder:text-gray-400
               focus:outline-none
-              focus:ring-2 focus:ring-blue-500
+              focus:ring-2 focus:ring-blue-600
+              focus:ring-offset-1
               focus:bg-white
+              shadow-sm
               transition
               duration-200
-              shadow-sm
+              caret-blue-600
             "
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            spellCheck={false}
-            aria-label="Buscar exame"
           />
         </div>
       </section>
 
       {/* Results */}
-      <section className="w-full max-w-5xl space-y-10">
+      <section
+        className="w-full max-w-5xl space-y-10"
+        role="list"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         {filteredExams.length > 0 ? (
           filteredExams.map((exam) => (
-            <MinimalExamBlock key={exam.id} exam={exam} />
+            <article
+              key={exam.id}
+              tabIndex={0}
+              role="listitem"
+              aria-label={`Exame ${exam.name}, grupo ${exam.group}`}
+              className="focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+            >
+              <ExamChart examInfo={exam} examData={exam.exam_data} />
+            </article>
           ))
         ) : (
           <p className="text-center text-gray-500 text-lg mt-12">
@@ -75,16 +92,5 @@ export default function ClientExamSearch({ exams }: Props) {
         )}
       </section>
     </main>
-  );
-}
-
-function MinimalExamBlock({ exam }: { exam: Exam }) {
-  return (
-    <article
-      tabIndex={0}
-      aria-label={`Exame ${exam.name}, grupo ${exam.group}`}
-    >
-      <ExamChart examInfo={exam} examData={exam.exam_data} />
-    </article>
   );
 }

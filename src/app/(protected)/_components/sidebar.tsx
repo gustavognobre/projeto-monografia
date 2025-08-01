@@ -7,8 +7,8 @@ import {
     FileSymlink,
     Home,
     PersonStanding,
-    Settings,
     TableCellsSplit,
+    UserRoundSearch,
     Users,
 } from "lucide-react";
 import {
@@ -46,17 +46,16 @@ export function SideBar() {
         { icon: Home, label: "Home", link: "/main" },
         { icon: ChartArea, label: "Gráfico", link: "/chart"},
         { icon: Users, label: "Usuário", link: "/client", role: UserRole.ADMIN },
-        // { icon: Settings, label: "Configurações", link: "/settings" },
         { icon: TableCellsSplit, label: "Parametros", link: "/parameter", role: UserRole.ADMIN },
         {icon: FilePlus, label: "Adicionar Exame", link: "/new-exam"},
         {icon: FileChartColumn, label: "Meus Exames", link: "/my-exams"},
-        {icon: FileSymlink, label: "Adicionar Paciente", link: "/my-patient",role: UserRole.ADMIN},
-        {icon: PersonStanding, label: "Antropometria", link: "/my-anthropometry",},
+        {icon: FileSymlink, label: "Adicionar Medico", link: "/my-medic"},
+        {icon: PersonStanding, label: "Antropometria", link: "/my-anthropometry"},
+        {icon: UserRoundSearch, label: "Meus Pacientes", link: "/my-patients",role: UserRole.MEDIC},
     ];
 
     return (
         <div className="flex h-screen bg-white">
-            {/* Sidebar */}
             <Sidebar collapsible="icon">
                 <SidebarHeader>
                     <SidebarTrigger />

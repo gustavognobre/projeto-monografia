@@ -155,3 +155,30 @@ model Anthropometry {
 
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model Medico {
+  id            String      @id @default(cuid())
+  nome          String
+  email         String?     @unique
+  crm           String
+  tipo          TipoInscricao?
+  situacao      Situacao?
+  especialidade String?
+  area          String?
+  uf            String
+  criadoEm      DateTime    @default(now())
+  atualizadoEm  DateTime    @updatedAt
+
+  @@unique([crm, uf])
+}
+
+enum TipoInscricao {
+  Principal
+  Secundaria
+}
+
+enum Situacao {
+  Ativo
+  Inativo
+}
+

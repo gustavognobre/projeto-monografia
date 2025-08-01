@@ -1,21 +1,34 @@
 'use server';
 import { db } from "@/lib/db";
 
-export async function createPatient(formData: FormData) {
-  const medicalId = formData.get("medicalId");
-  const patientId = formData.get("patientId");
-
+export async function createPatient(medicalId: string, patientId: string) {
   if (!medicalId || !patientId) {
     throw new Error("Dados obrigatórios ausentes");
   }
 
+  // Verifica se já existe a relação
+  const existingRelation = await db.patient.findFirst({
+    where: {
+      medicalId,
+      patientId,
+    },
+  });
+
+  if (existingRelation) {
+    // Relação já existe, não cria duplicado
+    return { message: "Relação já existe", created: false };
+  }
+
+  // Cria a relação se não existir
   await db.patient.create({
     data: {
       createdAt: new Date(),
-      medicalId: medicalId.toString(),
-      patientId: patientId.toString(),
+      medicalId,
+      patientId,
     },
   });
+
+  return { message: "Relação criada com sucesso", created: true };
 }
 
 export async function checkPatientExistsOnServer(patientId: string): Promise<boolean> {
@@ -37,7 +50,6 @@ export async function getMyPatients(userId: string) {
     where: {
       OR: [
         { medicalId: userId },
-        { patientId: userId },
       ]
     },
     include: {
@@ -46,3 +58,45 @@ export async function getMyPatients(userId: string) {
     }
   });
 }
+
+export async function getMyDoctors(patientId: string) {
+  if (!patientId) return [];
+
+  const relations = await db.patient.findMany({
+    where: {
+      patientId,
+    },
+    include: {
+      medicalUser: true, // dados do user (nome, email, etc.)
+    },
+  });
+
+  const doctors = await Promise.all(
+    relations.map(async (relation) => {
+      const medicoInfo = await db.medico.findUnique({
+        where: {
+          email: relation.medicalUser.email ?? "",
+        },
+      });
+
+      return {
+        id: relation.medicalUser.id,
+        nomeUsuario: relation.medicalUser.name,
+        email: relation.medicalUser.email,
+        medicoId: medicoInfo?.id,
+        nome: medicoInfo?.nome,
+        crm: medicoInfo?.crm,
+        uf: medicoInfo?.uf,
+        tipo: medicoInfo?.tipo,
+        situacao: medicoInfo?.situacao,
+        especialidade: medicoInfo?.especialidade,
+        area: medicoInfo?.area,
+        criadoEm: medicoInfo?.criadoEm,
+      };
+    })
+  );
+
+  return doctors;
+}
+
+

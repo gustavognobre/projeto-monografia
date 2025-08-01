@@ -31,6 +31,35 @@ export async function getAllUserExamResults() {
   return { user, examsWithData };
 }
 
+export async function getAllUserExamResultsByUserId(userId: string) {
+  if (!userId) return null;
+
+  // Pega o usuário pelo id fornecido
+  const user = await db.user.findUnique({
+    where: { id: userId },
+  });
+  if (!user) return null;
+
+  // Pega todos os exames com dados relacionados ao usuário
+  const examsWithData = await db.exam.findMany({
+    where: {
+      exam_data: {
+        some: {
+          userId: userId,
+        },
+      },
+    },
+    include: {
+      exam_data: {
+        where: { userId: userId },
+        orderBy: { dateExam: "asc" },
+      },
+    },
+  });
+
+  return { user, examsWithData };
+}
+
 export async function getAllUserExam() {
   const thisUser = await currentUser();
   if (!thisUser) return null;
@@ -52,7 +81,6 @@ export async function getAllUserExam() {
 
 export async function getAllUserExamById(id: string) {
   if (!id) return null;
-  console.log("aqui",id)
   const exams = await db.exam_data.findMany({
     where: {
       userId:id
@@ -64,7 +92,6 @@ export async function getAllUserExamById(id: string) {
       createdAt: "desc",
     },
   });
-  console.log("chegou", exams)
   return exams;
 }
 

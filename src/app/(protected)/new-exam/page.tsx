@@ -19,17 +19,25 @@ function calcularIdade(dataNascimento: string) {
 
 export default async function NewExam() {
   const user = await getUser();
+
   if (!user || !user.dateBirth) {
-    return <h1>Usuário não autenticado ou data de nascimento não informada</h1>;
+    return (
+      <main className="flex items-center justify-center min-h-screen px-4">
+        <h1 className="text-center text-red-600 text-xl font-semibold">
+          Usuário não autenticado ou data de nascimento não informada
+        </h1>
+      </main>
+    );
   }
+
   const idade = calcularIdade(user.dateBirth);
   const exams = await db.exam.findMany({
-    orderBy: { name: "desc" },
+    orderBy: { name: "asc" },
   });
 
   return (
     <main className="flex flex-col items-center gap-10 px-4 pt-24 max-w-4xl mx-auto">
-      <SimpleExamCards exams={exams} idade={idade} gender={user.gender} user={user}/>
+      <SimpleExamCards exams={exams} idade={idade} gender={user.gender} user={user} />
     </main>
   );
 }
