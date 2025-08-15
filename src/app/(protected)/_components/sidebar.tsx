@@ -1,16 +1,14 @@
 "use client";
-
-import { useCurrentRole } from "@/hooks/use-current-role"; // Hook para pegar a role do usuário
 import { UserRole } from "@prisma/client";
 import {
+    ChartArea,
+    FileChartColumn,
     FilePlus,
+    FileSymlink,
     Home,
-    icons,
-    LayoutDashboard,
-    Server,
-    Settings,
+    PersonStanding,
     TableCellsSplit,
-    UserCog,
+    UserRoundSearch,
     Users,
 } from "lucide-react";
 import {
@@ -26,40 +24,38 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // Hook para pegar o pathname da URL atual
-
+import { usePathname } from "next/navigation"; 
+import { useCurrentRole } from "@/hooks/useAppRequest";
 interface RoleGateProps {
     children: React.ReactNode;
-    allowedRole?: UserRole; // Role permitida, opcional
+    allowedRole?: UserRole; 
 }
-
 export const RoleGate = ({ children, allowedRole }: RoleGateProps) => {
     const role = useCurrentRole();
 
     if (allowedRole && role !== allowedRole && role !== UserRole.ADMIN) {
-        return null; // Se a role não for permitida, nem ADMIN, retorna null
+        return null;
     }
-
-    return <>{children}</>; // Caso contrário, renderiza o conteúdo
+    return <>{children}</>; 
 };
 
 export function SideBar() {
-    const pathname = usePathname(); // Hook para pegar o pathname da URL atual
+    const pathname = usePathname(); 
 
     const menuItems = [
         { icon: Home, label: "Home", link: "/main" },
-        // { icon: LayoutDashboard, label: "Painel", link: "/dashboard" },
-        { icon: Users, label: "Usuário", link: "/client" },
-        { icon: Settings, label: "Configurações", link: "/settings" },
-        // { icon: UserCog, label: "Administrador", link: "/admin", role: UserRole.ADMIN },
-        // { icon: Server, label: "Servidor", link: "/server", role: UserRole.ADMIN },
+        { icon: ChartArea, label: "Gráfico", link: "/chart"},
+        { icon: Users, label: "Usuário", link: "/client", role: UserRole.ADMIN },
         { icon: TableCellsSplit, label: "Parametros", link: "/parameter", role: UserRole.ADMIN },
-        {icon: FilePlus, label: "Adicionar Exame", link: "/new-exam"}
+        {icon: FilePlus, label: "Adicionar Exame", link: "/new-exam"},
+        {icon: FileChartColumn, label: "Meus Exames", link: "/my-exams"},
+        {icon: FileSymlink, label: "Adicionar Medico", link: "/my-medic"},
+        {icon: PersonStanding, label: "Antropometria", link: "/my-anthropometry"},
+        {icon: UserRoundSearch, label: "Meus Pacientes", link: "/my-patients",role: UserRole.MEDIC},
     ];
 
     return (
         <div className="flex h-screen bg-white">
-            {/* Sidebar */}
             <Sidebar collapsible="icon">
                 <SidebarHeader>
                     <SidebarTrigger />
@@ -77,7 +73,7 @@ export function SideBar() {
                                                     href={item.link}
                                                     className={`flex items-center gap-2 w-full text-left ${
                                                         pathname === item.link
-                                                            ? "bg-blue-500 text-white" // Aplica o destaque quando a rota corresponder
+                                                            ? "bg-blue-500 text-white"
                                                             : "text-gray-800 hover:bg-blue-200"
                                                     }`}
                                                 >

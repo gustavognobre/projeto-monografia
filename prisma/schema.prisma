@@ -30,6 +30,11 @@ model User {
   isTwoFactorEnabled Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
 
+  exam_data     Exam_data[] 
+  anthropometry Anthropometry[]
+
+  medicalPatients      Patient[] @relation("MedicalUserRelation")
+  patientProfiles      Patient[] @relation("PatientUserRelation")
 
 }
 model Account {
@@ -87,16 +92,93 @@ model TwoFactorConfirmation {
 }
 
 model Exam {
-  id  String @id @default(cuid())
-  name  String
-  group String
-  normal_min Float?
-  normal_max Float?
+  id             String       @id @default(cuid())
+  name           String
+  group          String
+  normal_min     Float?
+  normal_max     Float?
   intermediary_min Float?
   intermediary_max Float?
-  hard_value Float?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
-
+  hard_value     Float?
+  unit           String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt @default(now())
+  
+  exam_data      Exam_data[]  @relation("ExamToExamData")
+  
   @@index([id])
 }
+
+model Exam_data {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  show      Boolean
+  examId    String
+  userId    String
+  value     Float?
+  notes     String?
+  lab       String?
+  dateExam  String?
+  
+  exam      Exam     @relation("ExamToExamData", fields: [examId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Patient {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  medicalId   String
+  patientId   String
+
+  medicalUser User @relation("MedicalUserRelation", fields: [medicalId], references: [id], onDelete: Cascade)
+  patientUser User @relation("PatientUserRelation", fields: [patientId], references: [id], onDelete: Cascade)
+}
+
+model Anthropometry {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  show       Boolean
+  userId     String
+  height     Float?
+  weight     Float?
+  chest      Float?
+  shoulder   Float?
+  rightArm   Float?
+  leftArm    Float?
+  waist      Float?
+  rightLeg   Float?
+  leftLeg    Float?
+  rightCalf  Float?
+  leftCalf   Float?
+  notes      String?
+  dateExam   String?
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Medico {
+  id            String      @id @default(cuid())
+  nome          String
+  email         String?     @unique
+  crm           String
+  tipo          TipoInscricao?
+  situacao      Situacao?
+  especialidade String?
+  area          String?
+  uf            String
+  criadoEm      DateTime    @default(now())
+  atualizadoEm  DateTime    @updatedAt
+
+  @@unique([crm, uf])
+}
+
+enum TipoInscricao {
+  Principal
+  Secundaria
+}
+
+enum Situacao {
+  Ativo
+  Inativo
+}
+

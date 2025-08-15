@@ -1,6 +1,6 @@
 "use client";
 import { UserInfo } from "@/components/main/UserInfo.component";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { useCurrentUser } from "@/hooks/useAppRequest";
 
 export default function ClientPage() {
     const user = useCurrentUser();

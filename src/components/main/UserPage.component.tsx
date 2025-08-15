@@ -1,4 +1,4 @@
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { useCurrentUser } from "@/hooks/useAppRequest";
 
 export default function UsersPage() {
     const user = useCurrentUser();
