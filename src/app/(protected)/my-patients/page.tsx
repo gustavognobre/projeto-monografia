@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link"; // import do Link
 import { getMyPatients } from "@/actions/patient_relation";
 import { getUser } from "@/lib/get-user";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
 type User = {
   id: string;
@@ -51,19 +52,17 @@ export default async function Page() {
         const formattedDateBirth = pUser.dateBirth
           ? new Date(pUser.dateBirth).toLocaleDateString("pt-BR")
           : "Não informado";
-
+          const initials = pUser.name.slice(0, 2).toUpperCase();
         return (
              <Link
       key={pUser.id}
       href={`/my-patients/${pUser.id}`}
       className="group flex items-center gap-6 p-6 border border-gray-200 rounded-2xl shadow-sm bg-white hover:shadow-md hover:border-primary transition duration-200"
     >
-      <img
-        src={pUser.image || "/default-user.png"}
-        alt={`Foto de ${pUser.name || "Paciente"}`}
-        className="w-20 h-20 rounded-full object-cover ring-2 ring-primary/50 group-hover:ring-primary transition"
-        loading="lazy"
-      />
+      <Avatar className="h-20 w-20 border-2 border-primary/20">
+          <AvatarImage src={user?.image ?? ""} alt={pUser.name} />
+          <AvatarFallback>{initials || "UN"}</AvatarFallback>
+        </Avatar>
 
       <div className="flex-1">
         <h2 className="text-xl font-bold text-gray-800 group-hover:text-primary mb-1">

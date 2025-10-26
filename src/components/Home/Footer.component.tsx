@@ -16,14 +16,14 @@ export function Footer() {
                     <div className="text-center">
                         <h3 className="text-xl font-bold mb-4 font-montserrat">Links Rápidos</h3>
                         <ul className="space-y-2">
-                            <li>
+                            {/* <li>
                                 <Link
                                     href="#features"
                                     className="text-gray-200 hover:text-white transition duration-300 font-montserrat"
                                 >
                                     Funcionalidades
                                 </Link>
-                            </li>
+                            </li> */}
                             <li>
                                 <Link
                                     href="#testimonials"

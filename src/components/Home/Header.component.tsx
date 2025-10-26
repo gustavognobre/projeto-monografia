@@ -27,13 +27,13 @@ export function HomeHeader() {
                 </div>
                 {/* Links de Navegação */}
                 <nav className="hidden md:flex space-x-6">
-                    <Link
+                    {/* <Link
                         href="#features"
                         className="text-gray-700 hover:text-blue-600 transition duration-300 font-montserrat"
                         aria-label="Funcionalidades"
                     >
                         Funcionalidades
-                    </Link>
+                    </Link> */}
                 </nav>
                 <Button
                     onClick={handleClick}

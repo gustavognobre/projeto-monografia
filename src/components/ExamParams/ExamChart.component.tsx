@@ -173,7 +173,13 @@ export function ExamChart({ examInfo, examData }: ExamChartProps) {
       },
       x: {
         ticks: {
-          display: false, // se quiser manter sem labels no eixo X
+          display: true,
+          autoSkip: true,
+          maxRotation: 45,
+          minRotation: 0,
+          callback: function(value, index, ticks) {
+            return labels[index]; // usa as datas que você já gerou
+          },
         },
         grid: {
           display: false,

@@ -30,10 +30,18 @@ export async function createMedico(formData: FormData) {
   });
 
   // Atualiza o usuário para role 'medic'
-  await db.user.update({
-    where: { email },
-    data: { role: "MEDIC" },
+  const user = await db.user.findUnique({
+  where: { email },
   });
+
+  if (user) {
+    await db.user.update({
+      where: { email },
+      data: { role: "MEDIC" },
+    });
+  } else {
+    console.warn(`Usuário com email ${email} não encontrado. Role não foi atualizada.`);
+  }
 }
 
 

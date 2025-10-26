@@ -46,7 +46,7 @@ export function SideBar() {
         { icon: Home, label: "Home", link: "/main" },
         { icon: ChartArea, label: "Gráfico", link: "/chart"},
         { icon: Users, label: "Usuário", link: "/client", role: UserRole.ADMIN },
-        { icon: TableCellsSplit, label: "Parametros", link: "/parameter", role: UserRole.ADMIN },
+        { icon: TableCellsSplit, label: "Parâmetros", link: "/parameter", role: UserRole.ADMIN },
         {icon: FilePlus, label: "Adicionar Exame", link: "/new-exam"},
         {icon: FileChartColumn, label: "Meus Exames", link: "/my-exams"},
         {icon: FileSymlink, label: "Adicionar Medico", link: "/my-medic"},
